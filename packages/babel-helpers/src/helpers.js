@@ -10,6 +10,22 @@ const helper = (minVersion: string) => tpl => ({
   ast: () => template.program.ast(tpl),
 });
 
+helpers.currying = helper("7.6.0")`
+  export default function currying(fn) {
+    const numParamsRequired = fn.length;
+    function curryFactory(params) {
+      return function (...args) {
+        const newParams = params.concat(args);
+        if (newParams.length >= numParamsRequired) {
+          return fn(...newParams);
+        }
+        return curryFactory(newParams);
+      }
+    }
+    return curryFactory([]);
+  }
+`;
+
 helpers.typeof = helper("7.0.0-beta.0")`
   export default function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
